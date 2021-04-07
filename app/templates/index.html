@@ -59,7 +59,7 @@
 			</div><!-- END COL-MD-6 -->
 			<div class="col-md-6">
 				<pre>
-					{{ customers }}
+					{{ parsed }}
 					<!-- {{ budgetItems }} -->
 				</pre>
 			</div>
@@ -75,23 +75,21 @@
 	<script>
 
 	$(document).ready(function(){
-		console.log("DOC READY")
-		$('#create-customer').on('submit',function (e) {
-			e.preventDefault()
-			console.log($('#customer').serialize())
-		     $.ajax({
-		      type: 'post',
-		      url: '/customer/details',
-		      data: $('#customer').serialize(),
+		$.ajax({
+		      type: 'get',
+		      url: '/customer/details/18',
 		       success: function (q) {
 		       	console.log(q)
-		       // document.getElementById("pb").innerHTML= q;
 		       }
-		      });
-		     e.preventDefault();
-		     });
-
 		});
+		$.ajax({
+		      type: 'get',
+		      url: '/budget/details/18',
+		       success: function (q) {
+		       	console.log(q)
+		       }
+		});
+	});
 </script>
 </body>
 </html>

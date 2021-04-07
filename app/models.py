@@ -1,5 +1,8 @@
 from datetime import datetime
 from app import db, ma
+import random
+
+SEED = False
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,24 +13,43 @@ class BudgetItem(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
     name            = db.Column(db.String(140))
     customer_id     = db.Column(db.Integer, db.ForeignKey("customer.id"))
-    customer        = db.relationship("Customer", backref="BudgetItems")
+    customer        = db.relationship("Customer", backref="budgetItems")
     amount          = db.Column(db.Integer, default=0, nullable=False)
     date_created    = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
     date_modified   = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
 
-    # def __repr__(self):
-    #     return '<BudgetItem {}>'.format(self.id)
 
 class CustomerSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Customer
 
-    id      = ma.auto_field()
-    name    = ma.auto_field()
+    id              = ma.auto_field()
+    name            = ma.auto_field()
+    budgetItems     = ma.auto_field()
 
 class BudgetItemSchema(ma.SQLAlchemySchema):
     class Meta:
         model = BudgetItem
+        include_fk = True
 
-    id      = ma.auto_field()
-    name    = ma.auto_field()
+    id              = ma.auto_field()
+    name            = ma.auto_field()
+    customer        = ma.auto_field()
+    amount          = ma.auto_field()
+    date_created    = ma.auto_field()
+    date_modified   = ma.auto_field()
+
+if SEED:
+    customer_schema = CustomerSchema()
+    budget_schema   = BudgetItemSchema()
+    customers       = ['Cicayda', 'ATT', 'Verizon', 'Data Intel Group']
+    item_types      = ['Foundation Repar', 'Corrugated Steel', 'MDL Board', 'Backup Generator']
+    for i,c in enumerate(customers):
+        customer = Customer(name=c)
+        db.session.add(customer)
+
+        for e, item in enumerate(item_types):
+            budget_item = BudgetItem(name=item_types[random.randint(0, 3)],customer=customer, amount=random.randint(0, 6000))
+            db.session.add(budget_item)
+
+        db.session.commit()

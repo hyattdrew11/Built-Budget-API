@@ -66,3 +66,6 @@ flask db init
 flask db migrate -m "Budget Item Table"
 flask db upgrade
 ```
+
+
+flask db migrate -m "Add Customer Table & Update Budget Item Schema"
