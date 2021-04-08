@@ -16,7 +16,7 @@ class BudgetItem(db.Model):
     name            = db.Column(db.String(140))
     customer_id     = db.Column(db.Integer, db.ForeignKey("customer.id"))
     customer        = db.relationship("Customer", backref="budgetItems")
-    amount          = db.Column(db.Integer, default=0, nullable=False)
+    amount          = db.Column(db.Float)
     date_created    = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
     date_modified   = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
 
@@ -37,8 +37,8 @@ class BudgetItemSchema(ma.SQLAlchemySchema):
 
     id              = ma.auto_field()
     name            = ma.auto_field()
-    customer        = ma.auto_field()
-    amount          = ma.auto_field()
+    customer_id     = ma.auto_field()
+    amount          = fields.Float()
     date_created    = ma.auto_field()
     date_modified   = ma.auto_field()
 
