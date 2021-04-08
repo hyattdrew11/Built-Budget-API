@@ -4,44 +4,41 @@
 	<title>{{ title }}</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="">
 	<div class="container-fluid mt-3">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<div class="card">
 					<div class="card-body">
 						<h1>Create Budget Item</h1>
 						<hr />
 						<form id="create-form">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Select Customer</label> 
+								<label for="customer-select">Select Customer</label> 
 								 <select class="custom-select" id="select-customer">
 								 	{% for i in customers %}
-								    <option selected>{{ i['name'] }}</option>
+								    <option selected value="{{ i['id'] }}">{{ i['name'] }}</option onselect="chooseCustomer(this);">
 								    {% endfor %}
 								  </select>
-								  <div class="row mt-2">
-									<div class="col-md-6">
-									  	<div class="form-group">
-											<label for="budget-item-name">Item Description</label> 
-											<input class="form-control" id="budget-item-name" placeholder="budget item name..." type="text">
-										</div>
-									</div>
-									<div class="col-md-6">
-									  	<div class="form-group">
-											<label for="budget-item-amount">Item Amount</label> 
-											<input class="form-control" id="budget-item-amount" placeholder="budget item ammount..." type="number">
-										</div>
-									</div>
-								</div>
 							</div>
-							<!-- <div class="form-group">
-								<label for="exampleInputPassword1">Password</label> <input class="form-control" id="exampleInputPassword1" placeholder="Password" type="password">
-							</div> -->
-							<button class="btn btn-primary" type="submit">Submit</button>
 						</form>
 
-						<form id="create-customer">
+						<table class="table table-sm table-striped table-bordered">
+						  <thead>
+						    <tr>
+						      <th scope="col">#</th>
+						      <th scope="col">Customer</th>
+						      <th scope="col">Item</th>
+						      <th scope="col">Amount</th>
+						      <th scope="col">Date Created</th>
+						       <th scope="col">Date Modified</th>
+						    </tr>
+						  </thead>
+						  <tbody id="item-table">
+							</tbody>
+						</table>
+
+						<!-- <form id="create-customer">
 							<div class="form-group">
 								  <div class="row mt-2">
 									<div class="col-md-6">
@@ -53,16 +50,10 @@
 								</div>
 							</div>
 							<button class="btn btn-primary" type="submit">Submit</button>
-						</form>
+						</form> -->
 					</div><!-- END CARD BODY -->
 				</div><!-- END CARD -->
-			</div><!-- END COL-MD-6 -->
-			<div class="col-md-6">
-				<pre>
-					{{ parsed }}
-					<!-- {{ budgetItems }} -->
-				</pre>
-			</div>
+			</div><!-- END COL-MD-12 -->
 		</div><!-- END ROW -->
 	</div><!-- END CONTAINER -->
 	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"> -->
@@ -73,22 +64,38 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
 	</script>
 	<script>
-
 	$(document).ready(function(){
-		$.ajax({
+		$("#select-customer").change(function() {
+			let cID = $("#select-customer").val()
+  			$.ajax({
 		      type: 'get',
-		      url: '/customer/details/18',
-		       success: function (q) {
-		       	console.log(q)
+		      url: '/budget/details/' + cID,
+		       success: function (res) {
+		       	$('#item-table').empty()
+		       	let x 
+		       	console.log(res.data)
+		       	for(x in res.data) { 
+		       		let html = ''
+		       			html += '<tr>'
+		       				html += '<td>' + res.data[x].id + '</td>'
+		       				html += '<td>' + res.data[x].customer + '</td>'
+		       				html += '<td>' + res.data[x].name + '</td>'
+		       				html += '<td>' + res.data[x].amount + '</td>'
+		       				html += '<td>' + res.data[x].date_created + '</td>'
+		       				html += '<td>' + res.data[x].date_modified + '</td>'
+		       			html += '</tr>'
+		       			$('#item-table').append(html);
+		       	}
 		       }
+			});
 		});
-		$.ajax({
-		      type: 'get',
-		      url: '/budget/details/18',
-		       success: function (q) {
-		       	console.log(q)
-		       }
-		});
+		// $.ajax({
+		//       type: 'get',
+		//       url: '/budget/details/18',
+		//        success: function (q) {
+		//        	console.log(q)
+		//        }
+		// });
 	});
 </script>
 </body>

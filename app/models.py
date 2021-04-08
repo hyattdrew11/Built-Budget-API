@@ -1,5 +1,6 @@
 from datetime import datetime
 from app import db, ma
+from marshmallow import Schema, fields, validate
 import random
 
 SEED = False
@@ -7,6 +8,7 @@ SEED = False
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
 
 
 class BudgetItem(db.Model):
@@ -25,6 +27,7 @@ class CustomerSchema(ma.SQLAlchemySchema):
 
     id              = ma.auto_field()
     name            = ma.auto_field()
+    email           = fields.Email()
     budgetItems     = ma.auto_field()
 
 class BudgetItemSchema(ma.SQLAlchemySchema):
