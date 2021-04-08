@@ -7,7 +7,7 @@
 ..%%%%...%%%%%%....%%............%%%%%....%%%%...%%%%%%..%%%%%%....%%...
 ........................................................................
 '''
-from flask import render_template, flash, redirect, url_for, jsonify, request
+from flask import render_template, flash, redirect, url_for, jsonify, request, abort
 from app import app, db
 from app.models import Customer, BudgetItem, CustomerSchema, BudgetItemSchema
 from marshmallow import validate, ValidationError
@@ -25,7 +25,7 @@ def index():
 
 
 # ADD A NEW CUSTOMER
-@app.route("/customer/details", methods=['POST'])
+@app.route("/customer/details", methods=['POST',])
 def create_customer():
     data = request.get_json()
     # VALIDATE POST DATA
@@ -37,10 +37,10 @@ def create_customer():
             return jsonify(response), 403
         else:
             # VALIDATION COMPLETE ADD NEW CUSTOMER
-            new_customer = Customer(name=data['name'], email=data['email'])
+            new_customer = Customer(**data)
             db.session.add(new_customer)
             db.session.commit()
-            response = { 'message': 'new customer registered' }
+            response = { 'message': 'new customer registered', 'data': customer_schema.dump(new_customer) }
             return jsonify(response), 202
     except ValidationError as err:
             errors = err.messages
@@ -48,39 +48,24 @@ def create_customer():
             return jsonify(errors), 403
 
 # GET CUSTOMER DETAILS
-@app.route("/customer/details/<customer_id>", methods=['GET'])
+@app.route("/customer/details/<customer_id>", methods=['GET', 'DELETE'])
 def get_customer(customer_id):
     customer = Customer.query.filter_by(id=customer_id).first()
     if customer is None:
         response = { 'message': 'customer does not exist' }
         return jsonify(response), 404
     else:
-        result = customer_schema.dump(customer)
-        response= { 
-            'data': result, 
-            'status_code' : 202 
-        }
-        return jsonify(response)
+        if request.method == 'POST':
+            result = customer_schema.dump(customer)
+            response= { 'data': result }
+            return jsonify(response), 202
+        elif request.method == 'DELETE':
+            db.session.delete(customer)
+            db.session.commit()
+            response = { 'message': 'customer' + customer_id + ' deleted' }
+            return jsonify(response), 202
 
-# ADD A NEW BUDGET ITEM
-@app.route("/budget/details", methods=['POST'])
-def create_budget_item():
-    data = request.get_json()
-    # VALIDATE POST DATA
-    try:
-        validate = budget_schema.load(data)
-        print(validate)
-        new_item = BudgetItem(name=data['name'], customer_id=data['customer_id'], amount=data['amount'])
-        db.session.add(new_item)
-        db.session.commit()
-        response = { 'message': 'new budget item created' }
-        return jsonify(response), 202
-    except ValidationError as err:
-            errors = err.messages
-            validate = False
-            return jsonify(errors), 403
-
-# GET BUDGET ITEMS FOR CUSTOMER
+# GET ALL BUDGET ITEMS FOR A CUSTOMER
 @app.route("/budget/details/<customer_id>", methods=['GET'])
 def get_budget_items(customer_id):
     items = BudgetItem.query.filter_by(customer_id=customer_id).all()
@@ -89,12 +74,46 @@ def get_budget_items(customer_id):
         return jsonify(response), 404
     else:
         result = budget_schema.dump(items)
-        response= { 
-            'data': result, 
-            'status_code' : 202 
-        }
+        response= {'data': result, 'status_code' : 202 }
         return jsonify(response)
 
+# ADD OR UPDATE A NEW BUDGET ITEM
+@app.route("/budget/details", methods=['POST', 'PUT'])
+def create_budget_item():
+    data = request.get_json()
+    try:
+         # VALIDATE JSON DATA
+        validate = budget_schema.load(data)
+    except ValidationError as err:
+        errors = err.messages
+        return jsonify(errors), 403
+    if request.method == 'POST':
+        new_item = BudgetItem(**data)
+        db.session.add(new_item)
+        db.session.commit()
+        response = { 'message': 'new budget item created', 'data': budget_schema.dump(new_item)}
+        return jsonify(response), 202
+    elif request.method == 'PUT':
+        print(data)
+        item = BudgetItem.query.filter_by(id=data['id']).update(dict(**data))
+        db.session.commit()
+        response = { 'message': 'new budget item created' }
+        return jsonify(response), 202
+    else:
+        return abort(400)
+
+# DELETE A BUDGET ITEM
+@app.route("/budget/details/<item_id>", methods=['DELETE'])
+def delete_budget_item(item_id):
+    item = BudgetItem.query.filter_by(id=item_id).first()
+    if item is None:
+        response = { 'message': 'budget item does not exist' }
+        return jsonify(response), 404
+    else:
+        db.session.delete(item)
+        db.session.commit()
+        response = { 'message': 'budget item ' + item_id + ' deleted' }
+        return jsonify(response), 202
 '''
 ..%%%%...%%%%%%..%%%%%%..........%%%%%...%%..%%..%%%%%%..%%......%%%%%%.
 .%%......%%........%%............%%..%%..%%..%%....%%....%%........%%...
