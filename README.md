@@ -43,8 +43,8 @@ Wed. April 8 - APX 4 hours work
 	- Reorient to SQL Alchemy 
 	- Build project layout
 	- Build base models
-	- Read Marshmellow docs as I have never used it before
-	- Revamp schmea definitions for field validation and relationship models
+	- Read Marshmallow docs as I have never used it before
+	- Revamp schema definitions for field validation and relationship models
 	- Run migrations
 	- Build rest url endpoints and logic
 	- Test with Postman
@@ -61,5 +61,5 @@ Thurs April 9 - Apx 4 hours work
 ## Notes
 
 - I am still working with unit tests and have begun to explore AWS Kinesis connectivity. 
-- I could have just done a basic schema & CRUD for budget items, but that did not make sense in a business context to me as these items would need to be associated with a customer or account in a production environment. Honestly doing a crash cource in Marshmellow was quite enjoyable and I see the value in it. It simplifies the validation and serialization from caller and responder in th API. 
-- The most time consuming part of this project has been Docker. I do not have a ton of exposure to it. I understand it at a high level, but just need more practive with Docker and BASH. 
+- I could have just done a basic schema & CRUD for budget items, but that did not make sense in a business context to me as these items would need to be associated with a customer or account in a production environment. Honestly doing a crash course in Marshmallow was quite enjoyable and I see the value in it. It simplifies the validation and serialization from caller and responder in the API. 
+- The most time consuming part of this project has been Docker. I do not have a ton of exposure to it. I understand it at a high level, but just need more practice with Docker and BASH. 
