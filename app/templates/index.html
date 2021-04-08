@@ -34,29 +34,14 @@
 						       <th scope="col">Date Modified</th>
 						    </tr>
 						  </thead>
-						  <tbody id="item-table">
-							</tbody>
+						  <tbody id="item-table"></tbody>
 						</table>
 
-						<!-- <form id="create-customer">
-							<div class="form-group">
-								  <div class="row mt-2">
-									<div class="col-md-6">
-									  	<div class="form-group">
-											<label for="budget-item-name">Customer Name</label> 
-											<input class="form-control" id="customer_name" placeholder="customer name..." type="text">
-										</div>
-									</div>
-								</div>
-							</div>
-							<button class="btn btn-primary" type="submit">Submit</button>
-						</form> -->
 					</div><!-- END CARD BODY -->
 				</div><!-- END CARD -->
 			</div><!-- END COL-MD-12 -->
 		</div><!-- END ROW -->
 	</div><!-- END CONTAINER -->
-	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"> -->
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
 	</script> 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
@@ -73,29 +58,22 @@
 		       success: function (res) {
 		       	$('#item-table').empty()
 		       	let x 
-		       	console.log(res.data)
-		       	for(x in res.data) { 
+		       	let dt = JSON.parse(res.data)
+		       	for(x in dt) { 
 		       		let html = ''
 		       			html += '<tr>'
-		       				html += '<td>' + res.data[x].id + '</td>'
-		       				html += '<td>' + res.data[x].customer + '</td>'
-		       				html += '<td>' + res.data[x].name + '</td>'
-		       				html += '<td>' + res.data[x].amount + '</td>'
-		       				html += '<td>' + res.data[x].date_created + '</td>'
-		       				html += '<td>' + res.data[x].date_modified + '</td>'
+		       				html += '<td>' + dt[x].id + '</td>'
+		       				html += '<td>' + dt[x].customer + '</td>'
+		       				html += '<td>' + dt[x].name + '</td>'
+		       				html += '<td>' + dt[x].amount + '</td>'
+		       				html += '<td>' + dt[x].date_created + '</td>'
+		       				html += '<td>' + dt[x].date_modified + '</td>'
 		       			html += '</tr>'
 		       			$('#item-table').append(html);
 		       	}
 		       }
 			});
 		});
-		// $.ajax({
-		//       type: 'get',
-		//       url: '/budget/details/18',
-		//        success: function (q) {
-		//        	console.log(q)
-		//        }
-		// });
 	});
 </script>
 </body>

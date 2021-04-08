@@ -11,9 +11,10 @@ from flask import render_template, flash, redirect, url_for, jsonify, request, a
 from app import app, db
 from app.models import Customer, BudgetItem, CustomerSchema, BudgetItemSchema
 from marshmallow import validate, ValidationError
+import json
 
 customer_schema = CustomerSchema()
-budget_schema = BudgetItemSchema()
+budget_schema = BudgetItemSchema(many=True)
 
 
 @app.route('/')
@@ -55,7 +56,7 @@ def get_customer(customer_id):
         response = { 'message': 'customer does not exist' }
         return jsonify(response), 404
     else:
-        if request.method == 'POST':
+        if request.method == 'GET':
             result = customer_schema.dump(customer)
             response= { 'data': result }
             return jsonify(response), 202
@@ -64,6 +65,8 @@ def get_customer(customer_id):
             db.session.commit()
             response = { 'message': 'customer' + customer_id + ' deleted' }
             return jsonify(response), 202
+        else:
+            return jsonify(response), 404
 
 # GET ALL BUDGET ITEMS FOR A CUSTOMER
 @app.route("/budget/details/<customer_id>", methods=['GET'])
@@ -74,7 +77,7 @@ def get_budget_items(customer_id):
         return jsonify(response), 404
     else:
         result = budget_schema.dump(items)
-        response= {'data': result, 'status_code' : 202 }
+        response = {'data': result, 'status_code' : 202 }
         return jsonify(response)
 
 # ADD OR UPDATE A NEW BUDGET ITEM
@@ -83,21 +86,34 @@ def create_budget_item():
     data = request.get_json()
     try:
          # VALIDATE JSON DATA
-        validate = budget_schema.load(data)
+         # AS WE HAVE ONE TO MANY RELATIONSHIP FROM CUSTOMER TO BUDGET ITEM DATA MUST BE ARRAY NOT OBJECT
+        validate = budget_schema.loads(json.dumps(data))
     except ValidationError as err:
         errors = err.messages
         return jsonify(errors), 403
     if request.method == 'POST':
-        new_item = BudgetItem(**data)
-        db.session.add(new_item)
-        db.session.commit()
-        response = { 'message': 'new budget item created', 'data': budget_schema.dump(new_item)}
-        return jsonify(response), 202
+         # THERE IS A MORE ELEGANT WAY TO DO THIS, BUT WANT THE ABILITY TO ADD MANY BUDGET ITEMS AT ONCE
+        items = []
+        for x in data:
+            new_item = BudgetItem(**x)
+            db.session.add(new_item)
+            db.session.commit()
+            items.append(new_item)
+
+        items = budget_schema.dump(items)
+        response = { 'message': 'new budget item created','data': items }
+
+        return response, 202
     elif request.method == 'PUT':
-        print(data)
-        item = BudgetItem.query.filter_by(id=data['id']).update(dict(**data))
-        db.session.commit()
-        response = { 'message': 'new budget item created' }
+        # THERE IS A MORE ELEGANT WAY TO DO THIS, BUT WANT THE ABILITY TO ADD MANY BUDGET ITEMS AT ONCE
+        items = []
+        for x in data:
+            item = BudgetItem.query.filter_by(id=x['id']).update(dict(**x))
+            db.session.commit()
+            items.append(x)
+
+        items = budget_schema.dump(items)
+        response = { 'message': 'new budget item created', 'data' : items }
         return jsonify(response), 202
     else:
         return abort(400)

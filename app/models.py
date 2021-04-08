@@ -38,6 +38,7 @@ class BudgetItemSchema(ma.SQLAlchemySchema):
     id              = ma.auto_field()
     name            = ma.auto_field()
     customer_id     = ma.auto_field()
+    customer        = ma.auto_field()
     amount          = fields.Float()
     date_created    = ma.auto_field()
     date_modified   = ma.auto_field()

@@ -1,0 +1,26 @@
+version: "2"
+services:
+  app:
+    build: ./
+    links:
+      - db
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - ./:/app
+
+  db:
+      image: mysql:5.7
+      ports:
+        - "32000:3306"
+      # expose:
+      #   - '3306'
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: builtapi
+        MYSQL_USER: drew
+        MYSQL_PASSWORD: secret
+
+      volumes:
+        - ./db:/docker-entrypoint-initdb.d/:ro

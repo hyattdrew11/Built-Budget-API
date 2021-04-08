@@ -26,13 +26,13 @@ def create_update_delete_budget_item(customer):
 
 	res_json 				= post_customer.json()
 	new_customer_id 		= res_json['data']['id']
-	budget_item 			= { "name":"TEST ITEM", "amount": 22356.57, "customer_id" : new_customer_id }
+	budget_item 			= [{ "name":"TEST ITEM", "amount": 22356.57, "customer_id" : new_customer_id }]
 	post_budget_item 		= requests.post(api_base_url + '/budget/details', json=budget_item)
 	res_codes.append(post_budget_item.status_code)
 
 	res_json 				= post_budget_item.json()
-	new_budget_item_id 		= res_json['data']['id']
-	update_item 			= res_json['data']['name'] = 'TEST ITEM UPDATED'
+	new_budget_item_id 		= res_json['data'][0]['id']
+	update_item 			= res_json['data'][0]['name'] = 'TEST ITEM UPDATED'
 	update_budget_item  	= requests.put(api_base_url + '/budget/details', json=res_json['data']) 
 	res_codes.append(update_budget_item.status_code)
 
