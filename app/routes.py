@@ -12,10 +12,12 @@ from app import app, db
 from app.models import Customer, BudgetItem, CustomerSchema, BudgetItemSchema
 from marshmallow import validate, ValidationError
 import json
+from boto import kinesis
 
 customer_schema = CustomerSchema()
 budget_schema = BudgetItemSchema(many=True)
-
+kinesis = kinesis.connect_to_region("us-east-1")
+kinesis.describe_stream("TestStream")
 
 @app.route('/')
 @app.route('/index')
@@ -41,6 +43,12 @@ def create_customer():
             new_customer = Customer(**data)
             db.session.add(new_customer)
             db.session.commit()
+            try:
+                nc = customer_schema.dump(new_customer)
+                kinesis.put_record("TestStream", json.dumps(nc), "partitionkey")
+            except Exception as e:
+                print(e)
+
             response = { 'message': 'new customer registered', 'data': customer_schema.dump(new_customer) }
             return jsonify(response), 202
     except ValidationError as err:
