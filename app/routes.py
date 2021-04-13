@@ -7,7 +7,7 @@
 ..%%%%...%%%%%%....%%............%%%%%....%%%%...%%%%%%..%%%%%%....%%...
 ........................................................................
 '''
-from flask import render_template, flash, redirect, url_for, jsonify, request, abort
+from flask import render_template, flash, redirect, url_for, jsonify, request, abort, current_app
 from app import app, db
 from app.models import Customer, BudgetItem, CustomerSchema, BudgetItemSchema
 from marshmallow import validate, ValidationError
@@ -16,8 +16,8 @@ from boto import kinesis
 
 customer_schema = CustomerSchema()
 budget_schema = BudgetItemSchema(many=True)
-kinesis = kinesis.connect_to_region("us-east-1")
-kinesis.describe_stream("TestStream")
+kinesis = kinesis.connect_to_region(current_app.config['AWS_REGION'])
+kinesis.describe_stream(current_app.config['KINESIS_DATA_STREAM'])
 
 @app.route('/')
 @app.route('/index')
@@ -45,7 +45,7 @@ def create_customer():
             db.session.commit()
             try:
                 nc = customer_schema.dump(new_customer)
-                kinesis.put_record("TestStream", json.dumps(nc), "partitionkey")
+                kinesis.put_record(current_app.config['KINESIS_DATA_STREAM'], json.dumps(nc), "partitionkey")
             except Exception as e:
                 print(e)
 
