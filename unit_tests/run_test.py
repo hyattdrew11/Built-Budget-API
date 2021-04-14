@@ -4,6 +4,7 @@ import requests
 
 api_base_url = 'http://localhost:5000'
 
+# test create and delete a customer
 def create_delete_customer(customer):
 	post 			= requests.post(api_base_url + '/customer/details', json=customer)
 	res_json 		= post.json()
@@ -18,7 +19,7 @@ def test_create_delete_customer():
 	customer = {"name": "Unit Test","email" : "unit@test.com"}
 	assert create_delete_customer(customer) == 202
 
-
+# test create customer, create budget item, update budget item, delete budget item, delete customer
 def create_update_delete_budget_item(customer):
 	res_codes = []
 	post_customer 			= requests.post(api_base_url + '/customer/details', json=customer)
@@ -41,6 +42,7 @@ def create_update_delete_budget_item(customer):
 
 	delete_customer  		= requests.delete(api_base_url + '/customer/details/' + str(new_customer_id))
 	res_codes.append(delete_customer.status_code)
+	# need to figure out a way to do this more elegantly, brute forcing an array of http res codes not the best idea
 	for x in res_codes:
 		if x != 202:
 			return False

@@ -48,8 +48,39 @@
 	</script> 
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
 	</script>
+	{% set customerList = customers.split(',') %}
 	<script>
 	$(document).ready(function(){
+		//  LOAD FIST ITEM TABLE ITEMS
+		let customer = "{{ customerList[0] }}"
+		console.log(customer)
+		let x 
+		// for(x in customers) { console.log(x, customers) }
+		$.ajax({
+		      type: 'get',
+		      url: '/budget/details/' + cID,
+		       success: function (res) {
+		       	$('#item-table').empty()
+		       	let x 
+		       	let dt = JSON.parse(res.data)
+		       	console.log(res)
+		       	for(x in dt) { 
+		       		let html = ''
+		       			html += '<tr>'
+		       				html += '<td>' + dt[x].id + '</td>'
+		       				html += '<td>' + dt[x].customer + '</td>'
+		       				html += '<td>' + dt[x].name + '</td>'
+		       				html += '<td>' + dt[x].amount + '</td>'
+		       				html += '<td>' + dt[x].date_created + '</td>'
+		       				html += '<td>' + dt[x].date_modified + '</td>'
+		       			html += '</tr>'
+		       			$('#item-table').append(html);
+		       	}
+		       }
+			});
+
+
+		// CHANGE TABLES VALUES ON SELECT CHANGE
 		$("#select-customer").change(function() {
 			let cID = $("#select-customer").val()
   			$.ajax({
@@ -59,6 +90,7 @@
 		       	$('#item-table').empty()
 		       	let x 
 		       	let dt = JSON.parse(res.data)
+		       	console.log(res)
 		       	for(x in dt) { 
 		       		let html = ''
 		       			html += '<tr>'

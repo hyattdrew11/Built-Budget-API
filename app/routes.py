@@ -23,8 +23,7 @@ kinesis = kinesis.connect_to_region(app.config['AWS_REGION'])
 @app.route('/index')
 def index():
     customers   = Customer.query.all()
-    parsed = jsonify(customer_schema.dump(customers))
-    return render_template('index.html', title='Get Built', customers=customers, parsed=parsed)
+    return render_template('index.html', title='Get Built', customers=customers)
 
 
 # ADD A NEW CUSTOMER
@@ -92,6 +91,8 @@ def get_budget_items(customer_id):
 @app.route("/budget/details", methods=['POST', 'PUT'])
 def create_budget_item():
     data = request.get_json()
+    print(data)
+    print("Update a budget item")
     try:
          # VALIDATE JSON DATA
          # AS WE HAVE ONE TO MANY RELATIONSHIP FROM CUSTOMER TO BUDGET ITEM DATA MUST BE ARRAY NOT OBJECT
@@ -113,6 +114,7 @@ def create_budget_item():
 
         return response, 202
     elif request.method == 'PUT':
+        print("PUT")
         # THERE IS A MORE ELEGANT WAY TO DO THIS, BUT WANT THE ABILITY TO ADD MANY BUDGET ITEMS AT ONCE
         items = []
         for x in data:
@@ -124,6 +126,7 @@ def create_budget_item():
         response = { 'message': 'new budget item created', 'data' : items }
         return jsonify(response), 202
     else:
+        print("ELSE")
         return abort(400)
 
 # DELETE A BUDGET ITEM
