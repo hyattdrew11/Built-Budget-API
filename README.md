@@ -53,11 +53,11 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-	SECRET_KEY 						= ''
-	# SQLALCHEMY_DATABASE_URI 		= 'mysql://user:password@localhost/builtapi'
-	SQLALCHEMY_TRACK_MODIFICATIONS 	= 
-	KINESIS_DATA_STREAM 			= ''
-	AWS_REGION 						= ''
+	SECRET_KEY = ''
+	# SQLALCHEMY_DATABASE_URI	= 'mysql://user:password@localhost/builtapi'
+	SQLALCHEMY_TRACK_MODIFICATIONS = 
+	KINESIS_DATA_STREAM = ''
+	AWS_REGION = ''
 
 ```
 
