@@ -32,7 +32,24 @@ Proof of concept Get Built Budget API
 	- Demonstrate connectivity between your docker network and localstack using Kinesis (https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kinesis.html)
 	- Light record of time spent / decisions made
 
-## Setup
+## Local Dev Setup Flask 
+```
+git clone git@github.com:hyattdrew11/Built-Budget-API.git
+
+cd Built-Budget-API
+
+virtualenv env
+
+source env/bin/activate
+
+pip install -r requirements.txt
+```
+
+Edit the config.py file to connect to your local MySQL environment
+
+```
+```
+## Docker Setup
 
 Assumes you have Docker, Python 3.7, and Virtualenv installed. Also assumes you have an existing AWS Kinesis data stream created and your AWS CLI setup with correct permissions to interact with the Kinesis service. 
 ```
@@ -44,6 +61,7 @@ docker-compose build
 
 docker-compose up
 ```
+
 ## Project Record
 Wed. April 8 - Apx. 4 hours work
 

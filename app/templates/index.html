@@ -1,112 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
-	<title>{{ title }}</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name="viewport">
+	<!-- <link href="/favicon.ico" rel="icon"> -->
+	<title>Get Built</title>
+	<link href="/static/css/app.9177a605.css" rel="preload" as="style">
+	<link href="/static/css/chunk-vendors.55204a1e.css" rel="preload" as="style">
+	<link href="/static/js/app.27ef22c3.js" rel="preload" as="script">
+	<link href="/static/js/chunk-vendors.1e18ba0f.js" rel="preload" as="script">
+	<link href="/static/css/chunk-vendors.55204a1e.css" rel="stylesheet" as="style">
+	<link href="/static/css/app.9177a605.css" rel="stylesheet" as="style">
 </head>
-<body class="">
-	<div class="container-fluid mt-3">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="card">
-					<div class="card-body">
-						<h1>Create Budget Item</h1>
-						<hr />
-						<form id="create-form">
-							<div class="form-group">
-								<label for="customer-select">Select Customer</label> 
-								 <select class="custom-select" id="select-customer">
-								 	{% for i in customers %}
-								    <option selected value="{{ i['id'] }}">{{ i['name'] }}</option onselect="chooseCustomer(this);">
-								    {% endfor %}
-								  </select>
-							</div>
-						</form>
-
-						<table class="table table-sm table-striped table-bordered">
-						  <thead>
-						    <tr>
-						      <th scope="col">#</th>
-						      <th scope="col">Customer</th>
-						      <th scope="col">Item</th>
-						      <th scope="col">Amount</th>
-						      <th scope="col">Date Created</th>
-						       <th scope="col">Date Modified</th>
-						    </tr>
-						  </thead>
-						  <tbody id="item-table"></tbody>
-						</table>
-
-					</div><!-- END CARD BODY -->
-				</div><!-- END CARD -->
-			</div><!-- END COL-MD-12 -->
-		</div><!-- END ROW -->
-	</div><!-- END CONTAINER -->
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
-	</script> 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
-	</script> 
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+<body>
+	<noscript><strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript>
+	<div id="app"></div>
+	<script src="/static/js/chunk-vendors.1e18ba0f.js" as="script">
 	</script>
-	{% set customerList = customers.split(',') %}
-	<script>
-	$(document).ready(function(){
-		//  LOAD FIST ITEM TABLE ITEMS
-		let customer = "{{ customerList[0] }}"
-		console.log(customer)
-		let x 
-		// for(x in customers) { console.log(x, customers) }
-		$.ajax({
-		      type: 'get',
-		      url: '/budget/details/' + cID,
-		       success: function (res) {
-		       	$('#item-table').empty()
-		       	let x 
-		       	let dt = JSON.parse(res.data)
-		       	console.log(res)
-		       	for(x in dt) { 
-		       		let html = ''
-		       			html += '<tr>'
-		       				html += '<td>' + dt[x].id + '</td>'
-		       				html += '<td>' + dt[x].customer + '</td>'
-		       				html += '<td>' + dt[x].name + '</td>'
-		       				html += '<td>' + dt[x].amount + '</td>'
-		       				html += '<td>' + dt[x].date_created + '</td>'
-		       				html += '<td>' + dt[x].date_modified + '</td>'
-		       			html += '</tr>'
-		       			$('#item-table').append(html);
-		       	}
-		       }
-			});
-
-
-		// CHANGE TABLES VALUES ON SELECT CHANGE
-		$("#select-customer").change(function() {
-			let cID = $("#select-customer").val()
-  			$.ajax({
-		      type: 'get',
-		      url: '/budget/details/' + cID,
-		       success: function (res) {
-		       	$('#item-table').empty()
-		       	let x 
-		       	let dt = JSON.parse(res.data)
-		       	console.log(res)
-		       	for(x in dt) { 
-		       		let html = ''
-		       			html += '<tr>'
-		       				html += '<td>' + dt[x].id + '</td>'
-		       				html += '<td>' + dt[x].customer + '</td>'
-		       				html += '<td>' + dt[x].name + '</td>'
-		       				html += '<td>' + dt[x].amount + '</td>'
-		       				html += '<td>' + dt[x].date_created + '</td>'
-		       				html += '<td>' + dt[x].date_modified + '</td>'
-		       			html += '</tr>'
-		       			$('#item-table').append(html);
-		       	}
-		       }
-			});
-		});
-	});
-</script>
+	<script src="/static/js/app.27ef22c3.js" as="script">
+	</script>
 </body>
 </html>

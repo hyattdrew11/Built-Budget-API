@@ -13,6 +13,9 @@ from app.models import Customer, BudgetItem, CustomerSchema, BudgetItemSchema
 from marshmallow import validate, ValidationError
 import json
 from boto import kinesis
+from flask_cors import CORS
+
+CORS(app)
 
 customer_schema = CustomerSchema()
 budget_schema = BudgetItemSchema(many=True)
@@ -25,6 +28,13 @@ def index():
     customers   = Customer.query.all()
     return render_template('index.html', title='Get Built', customers=customers)
 
+@app.route('/customers')
+def get_customers():
+    # STARTING TO BUILD OUT VUE FRONT END CONNECTION
+    customers   = Customer.query.all()
+    many_customers = CustomerSchema(many=True)
+    res = many_customers.dumps(customers)
+    return res, 202
 
 # ADD A NEW CUSTOMER
 @app.route("/customer/details", methods=['POST',])
@@ -47,6 +57,7 @@ def create_customer():
                 kinesis.put_record(app.config['KINESIS_DATA_STREAM'], json.dumps(nc), "partitionkey")
             except Exception as e:
                 print(e)
+                # CALL TO CLOUD WATCH OR OTHER ALERTING SYSTEM
 
             response = { 'message': 'new customer registered', 'data': customer_schema.dump(new_customer) }
             return jsonify(response), 202
