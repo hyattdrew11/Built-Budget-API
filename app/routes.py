@@ -19,7 +19,7 @@ CORS(app)
 
 customer_schema = CustomerSchema()
 budget_schema = BudgetItemSchema(many=True)
-kinesis = kinesis.connect_to_region(app.config['AWS_REGION'])
+# kinesis = kinesis.connect_to_region(app.config['AWS_REGION'])
 # kinesis.describe_stream(app.config['KINESIS_DATA_STREAM'])
 
 @app.route('/')
@@ -54,7 +54,7 @@ def create_customer():
             db.session.commit()
             try:
                 nc = customer_schema.dump(new_customer)
-                kinesis.put_record(app.config['KINESIS_DATA_STREAM'], json.dumps(nc), "partitionkey")
+                # kinesis.put_record(app.config['KINESIS_DATA_STREAM'], json.dumps(nc), "partitionkey")
             except Exception as e:
                 print(e)
                 # CALL TO CLOUD WATCH OR OTHER ALERTING SYSTEM
